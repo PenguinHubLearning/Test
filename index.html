@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>My Social Media Site</title>
+</head>
+<body>
+  <h1>My Social Media Site</h1>
+
+  <div id="posts">
+    <!-- This is where the posts will go -->
+  </div>
+
+  <input type="text" id="new-post" />
+  <button type="button" id="post-button">Post</button>
+
+  <script>
+    // Get the posts element
+    const postsElement = document.querySelector('#posts');
+
+    // Create an empty array to store the posts
+    const posts = [];
+
+    // Add a click event listener to the post button
+    document.querySelector('#post-button').addEventListener('click', () => {
+      // Get the new post from the input field
+      const newPost = document.querySelector('#new-post').value;
+
+      // Add the new post to the array
+      posts.push(newPost);
+
+      // Update the posts element with the new posts
+      postsElement.innerHTML = '';
+      for (const post of posts) {
+        postsElement.innerHTML += `<p>${post}</p>`;
+      }
+    });
+
+    // Load the posts from the file
+    loadPostsFromFile();
+
+    // Function to load the posts from the file
+    async function loadPostsFromFile() {
+      // Read the posts file
+      const postsFile = await fetch('posts.txt');
+      const postsText = await postsFile.text();
+
+      // Split the posts text into individual posts
+      const postsArray = postsText.split('\n');
+
+      // Add the posts to the array
+      for (const post of postsArray) {
+        posts.push(post);
+      }
+
+      // Update the posts element with the new posts
+      postsElement.innerHTML = '';
+      for (const post of posts) {
+        postsElement.innerHTML += `<p>${post}</p>`;
+      }
+    }
+  </script>
+</body>
+</html>
