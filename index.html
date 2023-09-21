@@ -2,6 +2,7 @@
 <html>
 <head>
   <title>My Social Media Site</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <h1>My Social Media Site</h1>
@@ -14,6 +15,30 @@
   <button type="button" id="post-button">Post</button>
 
   <script>
+    // Create a WebSocket connection to the server
+    const socket = new WebSocket('ws://localhost:3000');
+
+    // Add an event listener for incoming messages
+    socket.onmessage = (event) => {
+      // Get the message data
+      const message = JSON.parse(event.data);
+
+      // Add the message to the posts array
+      posts.push(message.text);
+
+      // Update the posts element with the new posts
+      postsElement.innerHTML = '';
+      for (const post of posts) {
+        postsElement.innerHTML += `<p>${post}</p>`;
+      }
+
+      // Write the new post to the file
+      fetch('posts.txt', {
+        method: 'POST',
+        body: message.text
+      });
+    };
+
     // Get the posts element
     const postsElement = document.querySelector('#posts');
 
@@ -33,6 +58,17 @@
       for (const post of posts) {
         postsElement.innerHTML += `<p>${post}</p>`;
       }
+
+      // Send the new post to the server
+      socket.send(JSON.stringify({
+        text: newPost
+      }));
+
+      // Write the new post to the file
+      fetch('posts.txt', {
+        method: 'POST',
+        body: newPost
+      });
     });
 
     // Load the posts from the file
